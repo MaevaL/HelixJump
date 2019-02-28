@@ -23,7 +23,7 @@ GameObject:
   - component: {fileID: 23255342448133614}
   - component: {fileID: 95011449630887384}
   - component: {fileID: 64388952224763296}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: helix piece (5)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -42,7 +42,7 @@ GameObject:
   - component: {fileID: 23024173840039226}
   - component: {fileID: 95349680342721184}
   - component: {fileID: 64945145105724548}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: helix piece (7)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -61,7 +61,7 @@ GameObject:
   - component: {fileID: 23439341832180572}
   - component: {fileID: 95073625339549506}
   - component: {fileID: 64942586540669206}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: helix piece (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -80,7 +80,7 @@ GameObject:
   - component: {fileID: 23713448160987616}
   - component: {fileID: 95799439509811442}
   - component: {fileID: 64114835248091860}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: helix piece (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -99,7 +99,7 @@ GameObject:
   - component: {fileID: 23332770600834914}
   - component: {fileID: 95049814531817114}
   - component: {fileID: 64529535847402888}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: helix piece (4)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -114,6 +114,8 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4275612939852198}
+  - component: {fileID: 65206986755811054}
+  - component: {fileID: 114127249588288430}
   m_Layer: 0
   m_Name: Helix
   m_TagString: Untagged
@@ -133,7 +135,7 @@ GameObject:
   - component: {fileID: 23587128697943500}
   - component: {fileID: 95436316716909024}
   - component: {fileID: 64557771909769794}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: helix piece (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -152,7 +154,7 @@ GameObject:
   - component: {fileID: 23782742522751788}
   - component: {fileID: 95079207829802032}
   - component: {fileID: 64788399564856642}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: helix piece (6)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -171,7 +173,7 @@ GameObject:
   - component: {fileID: 23019485499426252}
   - component: {fileID: 95192885104841746}
   - component: {fileID: 64875920618228208}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: helix piece (10)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -190,7 +192,7 @@ GameObject:
   - component: {fileID: 23201602967122992}
   - component: {fileID: 95654463134127752}
   - component: {fileID: 64618937506148086}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: helix piece
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -209,7 +211,7 @@ GameObject:
   - component: {fileID: 23454863925279514}
   - component: {fileID: 95653568757782988}
   - component: {fileID: 64174798285065712}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: helix piece (8)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -228,7 +230,7 @@ GameObject:
   - component: {fileID: 23142965049978844}
   - component: {fileID: 95256796480246574}
   - component: {fileID: 64764577876763008}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: helix piece (11)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -247,7 +249,7 @@ GameObject:
   - component: {fileID: 23328853425111218}
   - component: {fileID: 95930718359543756}
   - component: {fileID: 64594148688040572}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: helix piece (9)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -339,7 +341,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1269459795876370}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.7830028, z: 0}
+  m_LocalPosition: {x: 0, y: 0.7830028, z: 0}
   m_LocalScale: {x: 0.6666667, y: 0.08700031, z: 1}
   m_Children:
   - {fileID: 4167468984065198}
@@ -1095,6 +1097,18 @@ MeshCollider:
   m_CookingOptions: 14
   m_SkinWidth: 0.01
   m_Mesh: {fileID: 4300000, guid: 47f96be55d8832d429792aa2656f61a2, type: 3}
+--- !u!65 &65206986755811054
+BoxCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1269459795876370}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 4, y: 0.05, z: 4}
+  m_Center: {x: 0, y: -0.5, z: 0}
 --- !u!95 &95011449630887384
 Animator:
   serializedVersion: 3
@@ -1299,3 +1313,14 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
+--- !u!114 &114127249588288430
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1269459795876370}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fd0bdabd7462cd843ac83967dedcae1e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
