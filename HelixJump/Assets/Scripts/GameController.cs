@@ -13,9 +13,11 @@ public class GameController : MonoBehaviour {
     public event RestartEventHandler RestartEvent;
 
     public static GameController instance;
+    public HelixController helixController;
+    public BouncyBallController ballController;
 
-	// Use this for initialization
-	void Awake () {
+    // Use this for initialization
+    void Awake () {
 		if(instance == null)
         {
             instance = this;
@@ -26,11 +28,17 @@ public class GameController : MonoBehaviour {
         }
 
         highscore = PlayerPrefs.GetInt("Highscore");
+        
 	}
 
     public void NextLevel()
     {
         Debug.Log("next level reached ");
+        helixController.DestroyLevel();
+        helixController.ProceduralGeneration();
+        ballController.OnRestartBehavior();
+
+
     }
 
     // Restart current stage

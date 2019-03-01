@@ -13,10 +13,9 @@ public class BouncyBallController : MonoBehaviour {
     [Header("Super Ball")]
     public static int perfect = 0;
     public bool isSuperBallActive = false;
-    
-     
-	// Use this for initialization
-	void Awake () {
+
+    // Use this for initialization
+    void Awake () {
         initialPosition = transform.position;
 	}
 
@@ -31,10 +30,12 @@ public class BouncyBallController : MonoBehaviour {
             return;
 
      
-        if (isSuperBallActive && collision.gameObject.GetComponent<GoalController>() == null)
+        if (!collision.gameObject.transform.parent.CompareTag("Goal") && isSuperBallActive)
         {
+
             Debug.Log("SUPER BALL");
-            Destroy(collision.transform.parent.gameObject);
+            collision.transform.parent.gameObject.SetActive(false);
+            
             GameController.instance.AddScore(4);
             isSuperBallActive = false;
            
