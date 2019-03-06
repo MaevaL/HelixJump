@@ -8,13 +8,15 @@ public class GameController : MonoBehaviour {
     public int currentScore;
     public int currentLevel = 0;
     public bool isHighscoreReach = false;
+    public bool IsGameOver = false;
 
-    public delegate void RestartEventHandler();
-    public event RestartEventHandler RestartEvent;
 
     public static GameController instance;
     public HelixController helixController;
     public BouncyBallController ballController;
+    public UIController uiController;
+    public CameraController cameraController;
+    public int level;
 
     // Use this for initialization
     void Awake () {
@@ -27,27 +29,51 @@ public class GameController : MonoBehaviour {
             Destroy(gameObject);
         }
 
-        highscore = PlayerPrefs.GetInt("Highscore");
-        
-	}
+        if (PlayerPrefs.HasKey("Highscore"))
+        {
+            highscore = PlayerPrefs.GetInt("Highscore");
+        }
 
-    public void NextLevel()
-    {
-        Debug.Log("next level reached ");
-        helixController.DestroyLevel();
-        helixController.ProceduralGeneration();
-        ballController.OnRestartBehavior();
+        if (PlayerPrefs.HasKey("Level"))
+        {
+            level = PlayerPrefs.GetInt("Level");
+        }
+     
+        UIController.RestartEvent += OnRestartEvent;
 
 
     }
 
-    // Restart current stage
-    public void RestartLevel()
+    public void NextLevel()
     {
-        Debug.Log("GameOver");
-        if(RestartEvent != null)
+        if (!IsGameOver)
         {
-            RestartEvent();
+            level++;
+            PlayerPrefs.SetInt("Level", level);
+            uiController.OnLevelSucceed();
+            helixController.DestroyLevel();
+            helixController.ProceduralGeneration();
+            ballController.OnRestartBehavior();
+            cameraController.OnRestartBehavior();
+        }
+
+    }
+
+    // Restart current stage
+    public void OnRestartEvent()
+    {
+         helixController.OnRestartBehavior();
+         ballController.OnRestartBehavior();
+        cameraController.OnRestartBehavior();
+        IsGameOver = false;
+    }
+
+    public void GameOver()
+    {
+        if (!IsGameOver)
+        {
+            ballController.rbBall.velocity = Vector3.zero;
+            uiController.OnGameOver();
         }
     }
 
