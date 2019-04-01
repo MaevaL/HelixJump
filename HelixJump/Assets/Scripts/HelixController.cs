@@ -20,6 +20,7 @@ public class HelixController : MonoBehaviour {
   
     public int StepNumber;
     public float SpaceBetweenStep;
+    public UIController uiController;
 
     // Use this for initialization
     void Awake () {
@@ -31,20 +32,22 @@ public class HelixController : MonoBehaviour {
 	void Update () {
         //Work with touch
         //Follow mouvement of the mouse or touch
-        if (Input.GetMouseButton(0) && !GameController.instance.IsGameOver)
+        if (Input.GetMouseButton(0) && !GameController.instance.isGameOver)
         {
+            //Avoid controls of the helix when there is a UI screen
             if (EventSystem.current.IsPointerOverGameObject())
             {
                 return;
             }
-            Vector2 curInputPos = Input.mousePosition; //point touch the screen
+
+            Vector2 curInputPos = Input.mousePosition; //position of the current input
 
             if(prevInputPos == Vector3.zero)
             {
                 prevInputPos = curInputPos;
             }
 
-            float delta = prevInputPos.x - curInputPos.x; // distance between two positions
+            float delta = prevInputPos.x - curInputPos.x; // distance between the two positions
             prevInputPos = curInputPos;
 
             transform.Rotate(Vector3.up * delta * speed );
@@ -56,6 +59,9 @@ public class HelixController : MonoBehaviour {
         }
 	}
 
+    /// <summary>
+    /// Destroy the current level
+    /// </summary>
     public void DestroyLevel()
     {
         foreach (GameObject step in currentStepLevel)
@@ -66,29 +72,34 @@ public class HelixController : MonoBehaviour {
         currentStepLevel.Clear();
  
     }
+    /// <summary>
+    /// Generate a procedural level
+    /// </summary>
     public void ProceduralGeneration()
     {
         GameObject helixStepGo;
-        GameObject ChunkToInstantiate = EasyChunk[Random.Range(0, EasyChunk.Count)];
+        GameObject chunk = EasyChunk[Random.Range(0, EasyChunk.Count)];
 
         float randomRotation = 0;
 
         gameObject.transform.rotation = Quaternion.identity;
 
+        //All the platforms will be child of Steps
         GameObject Steps = new GameObject("Steps");
         currentStepLevel.Add(Steps);
         Steps.transform.position = Vector3.zero;
 
+
         for (int i = 0; i < StepNumber; i++)
         {
-            //Initial values for first chunk
-            helixStepGo = Instantiate(ChunkToInstantiate, transform.position, Quaternion.identity);
+            //Initial values for the first chunk
+            helixStepGo = Instantiate(chunk, transform.position, Quaternion.identity);
             helixStepGo.transform.position = InitialSpawn + new Vector3(0, -(i * SpaceBetweenStep), 0);
 
             helixStepGo.transform.Rotate(new Vector3(0, randomRotation, 0));
 
             //Random values for other chunks
-            ChunkToInstantiate = RandomChunk();
+            chunk = RandomChunk();
             randomRotation = Random.Range(0, 180);
 
             helixStepGo.transform.parent = Steps.transform;
@@ -96,7 +107,7 @@ public class HelixController : MonoBehaviour {
             currentStepLevel.Add(helixStepGo);
         }
 
-        //Instantiation of Goal chunk
+        //Initialisation of the Goal chunk
         helixStepGo = Instantiate(GoalChunk, transform.position, Quaternion.identity);
         helixStepGo.transform.position = InitialSpawn + new Vector3(0, -(StepNumber * SpaceBetweenStep), 0);
         helixStepGo.transform.parent = Steps.transform;
@@ -106,7 +117,11 @@ public class HelixController : MonoBehaviour {
         Steps.transform.parent = gameObject.transform;      
     }
 
-    public GameObject RandomChunk()
+    /// <summary>
+    /// Return a randomized chunk
+    /// </summary>
+    /// <returns>a randomised chunk</returns>
+    private GameObject RandomChunk()
     {
         float randomChunk = Random.Range(0, 100);
         if (randomChunk < 33)
@@ -122,35 +137,10 @@ public class HelixController : MonoBehaviour {
             return HardChunk[Random.Range(0, HardChunk.Count)];
         }
     }
-    public void ProceduralTestGeneration()
-    {
-        GameObject helixStepGo;
-        GameObject ChunkToInstantiate = EasyChunk[Random.Range(0, EasyChunk.Count)];
-        float Rotation = 0;
-        GameObject Steps;
-        Steps = Instantiate(new GameObject("Steps"));
-        Steps.transform.position = Vector3.zero;
 
-        float randomRotation = Rotation;
-
-        for (int i = 0; i < StepNumber; i++)
-        {
-            helixStepGo = Instantiate(ChunkToInstantiate, transform.position, Quaternion.identity);
-
-
-            helixStepGo.transform.position = InitialSpawn + new Vector3(0, -(i * SpaceBetweenStep), 0);
-
-
-
-            helixStepGo.transform.parent = Steps.transform;
-        }
-
-        helixStepGo = Instantiate(GoalChunk, transform.position, Quaternion.identity);
-        helixStepGo.transform.position = InitialSpawn + new Vector3(0, -(StepNumber * SpaceBetweenStep), 0);
-        helixStepGo.transform.parent = Steps.transform;
-        Steps.transform.parent = gameObject.transform;
-    }
-
+    /// <summary>
+    /// Reactivate all the platforms
+    /// </summary>
     public void OnRestartBehavior()
     {
         gameObject.transform.rotation = Quaternion.identity;
@@ -161,4 +151,33 @@ public class HelixController : MonoBehaviour {
                 step.transform.localScale = new Vector3(0.8f, 2f, 0.8f);
         }
     }
+
+    //public void ProceduralTestGeneration()
+    //{
+    //    GameObject helixStepGo;
+    //    GameObject ChunkToInstantiate = EasyChunk[Random.Range(0, EasyChunk.Count)];
+    //    float Rotation = 0;
+    //    GameObject Steps;
+    //    Steps = Instantiate(new GameObject("Steps"));
+    //    Steps.transform.position = Vector3.zero;
+
+    //    float randomRotation = Rotation;
+
+    //    for (int i = 0; i < StepNumber; i++)
+    //    {
+    //        helixStepGo = Instantiate(ChunkToInstantiate, transform.position, Quaternion.identity);
+
+
+    //        helixStepGo.transform.position = InitialSpawn + new Vector3(0, -(i * SpaceBetweenStep), 0);
+
+
+
+    //        helixStepGo.transform.parent = Steps.transform;
+    //    }
+
+    //    helixStepGo = Instantiate(GoalChunk, transform.position, Quaternion.identity);
+    //    helixStepGo.transform.position = InitialSpawn + new Vector3(0, -(StepNumber * SpaceBetweenStep), 0);
+    //    helixStepGo.transform.parent = Steps.transform;
+    //    Steps.transform.parent = gameObject.transform;
+    //}
 }

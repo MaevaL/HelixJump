@@ -4,22 +4,27 @@ using UnityEngine;
 
 public class GameController : MonoBehaviour {
 
+    public static GameController instance;
+
     public int highscore;
     public int currentScore;
-    public int currentLevel = 0;
-    public bool isHighscoreReach = false;
-    public bool IsGameOver = false;
+    public int currentLevel = 1;
 
-
-    public static GameController instance;
+    [Header("Controllers")]
     public HelixController helixController;
     public BouncyBallController ballController;
     public UIController uiController;
     public CameraController cameraController;
-    public int level;
+    
 
-    // Use this for initialization
+    [HideInInspector]
+    public bool isGameOver = false;
+
+    private bool isHighscoreReach = false;
+
     void Awake () {
+
+        //Singleton
 		if(instance == null)
         {
             instance = this;
@@ -29,6 +34,7 @@ public class GameController : MonoBehaviour {
             Destroy(gameObject);
         }
 
+        //Load player prefs saving
         if (PlayerPrefs.HasKey("Highscore"))
         {
             highscore = PlayerPrefs.GetInt("Highscore");
@@ -36,45 +42,50 @@ public class GameController : MonoBehaviour {
 
         if (PlayerPrefs.HasKey("Level"))
         {
-            level = PlayerPrefs.GetInt("Level");
+            currentLevel = PlayerPrefs.GetInt("Level");
         }
-     
-        UIController.RestartEvent += OnRestartEvent;
-
-
     }
 
+    /// <summary>
+    /// Behavior when a level is passed
+    /// </summary>
     public void NextLevel()
     {
-        if (!IsGameOver)
+        if (!isGameOver)
         {
-            level++;
-            PlayerPrefs.SetInt("Level", level);
+            currentLevel++;
+            PlayerPrefs.SetInt("Level", currentLevel);
+
             uiController.OnLevelSucceed();
             helixController.DestroyLevel();
             helixController.ProceduralGeneration();
             ballController.OnRestartBehavior();
             cameraController.OnRestartBehavior();
+            HelixStep.OnRestartBehavior();
+
+            currentScore = 0;
         }
 
     }
 
-    // Restart current stage
-    public void OnRestartEvent()
+    /// <summary>
+    /// Behavior when a level is restart because of a game over
+    /// </summary>
+    public void OnRestartBehavior()
     {
-         helixController.OnRestartBehavior();
-         ballController.OnRestartBehavior();
+        helixController.OnRestartBehavior();
+        ballController.OnRestartBehavior();
         cameraController.OnRestartBehavior();
-        IsGameOver = false;
+        HelixStep.OnRestartBehavior();
+        currentScore = 0;
     }
 
+    /// <summary>
+    /// Active gameOver UI
+    /// </summary>
     public void GameOver()
     {
-        if (!IsGameOver)
-        {
-            ballController.rbBall.velocity = Vector3.zero;
-            uiController.OnGameOver();
-        }
+        uiController.OnGameOver();        
     }
 
     public void AddScore(int score)
@@ -89,5 +100,39 @@ public class GameController : MonoBehaviour {
         }
     }
 
- 
+    /// <summary>
+    /// Launch a coroutine for a platform animation
+    /// </summary>
+    /// <param name="platform">platform concerned</param>
+    public void LaunchAnimationPlatform(GameObject platform)
+    {
+        StartCoroutine(AnimationPlatform(platform));
+    }
+
+    /// <summary>
+    /// Execute a platform animation
+    /// </summary>
+    /// <param name="platfrom">platform to animate</param>
+    /// <returns></returns>
+    private IEnumerator AnimationPlatform(GameObject platfrom)
+    {
+        float count = 0;
+        while (count < 1)
+        {
+            if(platfrom == null) { yield return null;  }
+            else
+            {
+                platfrom.transform.localScale = Vector3.Lerp(platfrom.transform.localScale, Vector3.up * 2, count);
+                count += 0.1f;
+                yield return new WaitForSeconds(0.01f);
+            }
+       
+        }
+
+    }
+
+   
+
+
+
 }

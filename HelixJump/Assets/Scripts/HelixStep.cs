@@ -5,47 +5,51 @@ using UnityEngine.UI;
 
 public class HelixStep : MonoBehaviour {
 
+    public static int stepNoCollision;
     public static int step;
     public delegate void StepEventHandler();
     public static event StepEventHandler StepEvent;
     public UIController uiController;
-    AudioSource audio;
+    SoundController sounds;
 
     void Awake()
     {
+        stepNoCollision = 0;
         step = 0;
 
     }
 
     void Start()
     {
-        audio = transform.parent.transform.parent.GetComponent<AudioSource>();
+        uiController = transform.parent.transform.parent.GetComponent<HelixController>().uiController;
+        sounds = SoundController.instance;
     }
 	void OnTriggerEnter(Collider other)
     {        
+        stepNoCollision += 1;
         step += 1;
-        if(StepEvent != null)
-        {
-            StepEvent();
-        }
 
-        audio.Play();
-        StartCoroutine(animationPlatform(transform.gameObject));
-        
+        sounds.PlaySingle(sounds.StepClip);
+        //StartCoroutine(animationPlatform(transform.gameObject));
+        GameController.instance.LaunchAnimationPlatform(transform.gameObject);
+
+        GameController.instance.AddScore(GameController.instance.currentLevel * stepNoCollision);
+        Invoke("DesactiveLocalScore", 1f);
+        uiController.localScaleText.GetComponent<Text>().text = "+" + (GameController.instance.currentLevel * stepNoCollision);
+        uiController.localScaleText.SetActive(true);
+
         Debug.Log("perfect : " + BouncyBallController.perfect);
         BouncyBallController.perfect++;       
     }
 
-    IEnumerator animationPlatform(GameObject go)
+    void DesactiveLocalScore()
     {
-        Debug.Log("Coroutine");
-        float count = 0;
-        while (count < 1)
-        {
-            go.transform.localScale = Vector3.Lerp(go.transform.localScale, Vector3.up * 2, count);
-            count += 0.1f;
-            yield return new WaitForSeconds(0.01f);
-        }
+        uiController.localScaleText.SetActive(false);
+    }
 
+    public static void OnRestartBehavior()
+    {
+        step = 0;
+        stepNoCollision = 0;
     }
 }

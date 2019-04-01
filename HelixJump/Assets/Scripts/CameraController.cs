@@ -6,18 +6,13 @@ public class CameraController : MonoBehaviour {
 
     public BouncyBallController ballTarget;
     private Vector3 initialPosition;
-    float offsetCamera = 1.50f;
+    private float offsetCamera = 2.3f;
 	
-    // Use this for initialization
 	void Awake () {
         initialPosition = transform.position;
     }
 	
-	// Update is called once per frame
 	void Update () {
-        //Vector3 currentCameraPosition = transform.position;
-        //currentCameraPosition.y = ballTarget.transform.position.y + offsetCamera;
-        //transform.position = currentCameraPosition;
 
         if(ballTarget.transform.position.y + offsetCamera < transform.position.y)
         {
@@ -27,6 +22,9 @@ public class CameraController : MonoBehaviour {
         }
 	}
 
+    /// <summary>
+    /// Camera is put on its initial position when a level is restarted
+    /// </summary>
     public void OnRestartBehavior()
     {
         transform.position = initialPosition;

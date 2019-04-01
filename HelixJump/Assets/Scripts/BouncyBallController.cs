@@ -14,44 +14,41 @@ public class BouncyBallController : MonoBehaviour {
     [Header("Super Ball")]
     public static int perfect = 0;
     public bool isSuperBallActive = false;
-    public int currentStep;
     public UIController uiController;
-    public bool hasAddingScore = false;
     public GameObject poof;
     Vector3 ballLocalScale;
-    AudioSource audio;
+    SoundController sounds;
 
     // Use this for initialization
     void Awake () {
         initialPosition = transform.position;
-        HelixStep.StepEvent += OnStepEvent;
-        audio = GetComponent<AudioSource>();
     }
 
     void Start()
     {
         rbBall = GetComponent<Rigidbody>();
         ballLocalScale = transform.localScale;
+        sounds = SoundController.instance;
     }
     private void OnCollisionEnter(Collision collision)
     {
+        GetComponent<Animation>().Play();
+
         if (ignoreCollision)
             return;
 
-        audio.Play();
+        sounds.PlaySingle(sounds.BounceClip);
+
+        HelixStep.stepNoCollision = 0;
         
-     
-        if (!collision.gameObject.transform.parent.CompareTag("Goal") && isSuperBallActive && !GameController.instance.IsGameOver)
+        if (!collision.gameObject.transform.parent.CompareTag("Goal") && isSuperBallActive && !GameController.instance.isGameOver)
         {
             GameObject go = Instantiate(poof, transform.position, Quaternion.identity);
             go.transform.localScale = new Vector3(0.8f, 0.8f, 0.8f);
 
-            //TO REPLACE
-             StartCoroutine(animationPlatform(collision.transform.parent.gameObject));
-            //// collision.transform.parent.gameObject.SetActive(false);
+          
+            GameController.instance.LaunchAnimationPlatform(collision.transform.parent.gameObject);
 
-
-            GameController.instance.AddScore(perfect);
             isSuperBallActive = false;
            
         }
@@ -60,30 +57,18 @@ public class BouncyBallController : MonoBehaviour {
             rbBall.isKinematic = true;
             rbBall.transform.localScale = new Vector3(rbBall.transform.localScale.x,0.1f, rbBall.transform.localScale.z);
             GameController.instance.GameOver();
-            perfect = 0;
-           
         }
 
-        if (!GameController.instance.IsGameOver)
-        {
-            
+        if (!GameController.instance.isGameOver)
+        {            
             Instantiate(poof, transform.position, Quaternion.identity);
-            if (!hasAddingScore)
-            {
-                GameController.instance.AddScore(2);
-                Invoke("DesactiveLocalScore", 1f);
-                uiController.localScaleText.GetComponent<Text>().text = "+" + 2;
-                uiController.localScaleText.SetActive(true);
-                hasAddingScore = true;
-            }
             rbBall.velocity = Vector3.zero;
             rbBall.AddForce(Vector3.up * force, ForceMode.Impulse);
             ignoreCollision = true;
-              
+
             Invoke("AllowCollision", 0.2f);
-        
-           
         }
+
         perfect = 0;
     }
 	
@@ -98,39 +83,17 @@ public class BouncyBallController : MonoBehaviour {
         transform.localScale = ballLocalScale;
         transform.position = initialPosition;
         perfect = 0;
+        isSuperBallActive = false;
         rbBall.isKinematic = false;
     }
 
 	// Update is called once per frame
 	void Update () {
-        if (perfect >= 3 && !isSuperBallActive && !GameController.instance.IsGameOver)
+        if (perfect >= 3 && !isSuperBallActive && !GameController.instance.isGameOver)
         {
             isSuperBallActive = true;
             rbBall.AddForce(Vector3.down * 5, ForceMode.Impulse);
         }
 	}
-
-    void OnStepEvent()
-    {
-        hasAddingScore = false;
-    }
-
-    IEnumerator animationPlatform(GameObject go)
-    {
-        Debug.Log("Coroutine");
-        float count = 0;
-        while (count < 1)
-        {
-            go.transform.localScale = Vector3.Lerp(go.transform.localScale, Vector3.up * 2, count);
-            count += 0.1f;
-            yield return new WaitForSeconds(0.01f);
-        }
-
-    }
-
-    void DesactiveLocalScore()
-    {
-        uiController.localScaleText.SetActive(false);
-    }
 
 }

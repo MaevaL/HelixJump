@@ -8,31 +8,41 @@ public class UIController : MonoBehaviour {
     [SerializeField]private Text scoreText;
     [SerializeField]private Text highScoreText;
     [SerializeField] private Text level;
+    [SerializeField]
+    private Text PercentFinished;
+    [SerializeField]
+    private Text LevelGoText;
+    [SerializeField]
+    private Text CurrentLevelText;
+
     [SerializeField] private GameObject ScorePanel;
     [SerializeField] private GameObject GameOverPanel;
     [SerializeField] private GameObject NextLevelPanel;
    public GameObject localScaleText;
     [SerializeField] private Canvas canvas;
 
-    public delegate void RestartEventHandler();
-    public static event RestartEventHandler RestartEvent;
-
     void Start()
     {
         highScoreText.text = "Best : " + GameController.instance.highscore.ToString();
+        CurrentLevelText.text = "Level " + GameController.instance.currentLevel;
     }
+
 	// Update is called once per frame
 	void Update () {
         scoreText.text = GameController.instance.currentScore.ToString();
-        if (GameController.instance.isHighscoreReach)
+        if(HelixStep.step > 0)
         {
-            highScoreText.text = "Best : " + PlayerPrefs.GetInt("Highscore");
+            highScoreText.gameObject.SetActive(false);
+        } else
+        {
+            highScoreText.gameObject.SetActive(true);
         }
     }
     private void LevelSucceed()
     {
         ScorePanel.SetActive(false);
-        level.text = "Level " + GameController.instance.level + " passed";
+        level.text = "Level " + GameController.instance.currentLevel + " passed";
+        CurrentLevelText.text = "Level " + GameController.instance.currentLevel;
         NextLevelPanel.SetActive(true);
     }
 
@@ -46,13 +56,17 @@ public class UIController : MonoBehaviour {
     {
         Invoke("LevelSucceed", 0.2f);
         Invoke("ReleaseLevelPan", 1.2f);
+        highScoreText.text = "Best : " + GameController.instance.highscore;
+        localScaleText.SetActive(false);
     }
 
     private void GameOver()
     {
-        GameController.instance.IsGameOver = true;
-        ScorePanel.SetActive(false);
-        GameOverPanel.SetActive(true); 
+        GameController.instance.isGameOver = true;
+        LevelGoText.text = "Level " + GameController.instance.currentLevel;
+        PercentFinished.text = "Ended " + HelixStep.step * 10 + "%";
+        GameOverPanel.SetActive(true);
+        highScoreText.text = "Best : " + GameController.instance.highscore;
     }
 
     public void OnGameOver()
@@ -63,11 +77,10 @@ public class UIController : MonoBehaviour {
     public void OnClickPanel()
     {
         GameOverPanel.SetActive(false);
-        GameController.instance.IsGameOver = false;
-        if (RestartEvent != null)
-        {
-            RestartEvent();
-        }
+        
+        ScorePanel.SetActive(true);
+        GameController.instance.isGameOver = false;
+        GameController.instance.OnRestartBehavior();
        
     }
 
